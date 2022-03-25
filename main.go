@@ -5,6 +5,7 @@ import (
 	docs "kanban-board/docs"
 	"kanban-board/models"
 
+	"github.com/joho/godotenv"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
@@ -12,6 +13,8 @@ import (
 )
 
 func main() {
+	godotenv.Load()
+
 	models.ConnectDatabase()
 	r := gin.Default()
 	docs.SwaggerInfo.BasePath = "/"
