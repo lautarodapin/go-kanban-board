@@ -1,49 +1,50 @@
 package main
 
 import (
+	"kanban-board/controllers"
+	docs "kanban-board/docs"
+	"kanban-board/models"
+
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
-type Product struct {
-	gorm.Model
-	Code  string
-	Price uint
-}
-
 func main() {
-	db, err := gorm.Open(sqlite.Open("test.sqlite"), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
+	models.ConnectDatabase()
+	r := gin.Default()
+	docs.SwaggerInfo.BasePath = "/"
+
+	kanbans := r.Group("/kanbans")
+	{
+		kanbans.GET("/", controllers.GetKanbans())
+		kanbans.POST("/", controllers.CreateKanban())
+		kanbans.GET("/:id", controllers.GetKanban())
+		kanbans.PUT("/:id", controllers.UpdateKanban())
+	}
+	dropzones := r.Group("/dropzones")
+	{
+		dropzones.GET("/", controllers.GetDropzones())
+		dropzones.POST("/", controllers.CreateDropzone())
+		dropzones.GET("/:id", controllers.GetDropzone())
+		dropzones.PUT("/:id", controllers.UpdateDropzone())
+	}
+	columns := r.Group("/columns")
+	{
+		columns.GET("/", controllers.GetColumns())
+		columns.POST("/", controllers.CreateColumn())
+		columns.GET("/:id", controllers.GetColumn())
+		columns.PUT("/:id", controllers.UpdateColumn())
+	}
+	tickets := r.Group("/tickets")
+	{
+		tickets.GET("/", controllers.GetTickets())
+		tickets.POST("/", controllers.CreateTicket())
+		tickets.GET("/:id", controllers.GetTicket())
+		tickets.PUT("/:id", controllers.UpdateTicket())
 	}
 
-	// Migrate the schema
-	db.AutoMigrate(&Product{})
-
-	// Create
-	db.Create(&Product{Code: "D42", Price: 100})
-
-	// Read
-	var product Product
-	db.First(&product, 1)                 // find product with integer primary key
-	db.First(&product, "code = ?", "D42") // find product with code D42
-
-	// Update - update product's price to 200
-	db.Model(&product).Update("Price", 200)
-	// Update - update multiple fields
-	db.Model(&product).Updates(Product{Price: 200, Code: "F42"}) // non-zero fields
-	db.Model(&product).Updates(map[string]interface{}{"Price": 200, "Code": "F42"})
-
-	// Delete - delete product
-	db.Delete(&product, 1)
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-
-		c.JSON(200, gin.H{
-			"message": "pong",
-			"product": product,
-		})
-	})
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

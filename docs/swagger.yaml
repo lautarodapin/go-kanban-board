@@ -1,0 +1,535 @@
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  models.BaseDropzone:
+    properties:
+      column_id:
+        type: integer
+      name:
+        type: string
+      order:
+        type: integer
+    type: object
+  models.BaseTicket:
+    properties:
+      description:
+        type: string
+      dropzone_id:
+        type: integer
+      kanban_id:
+        type: integer
+      title:
+        type: string
+    type: object
+  models.Column:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        type: string
+      order:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.CreateKanban:
+    properties:
+      end_date:
+        type: string
+      name:
+        type: string
+      start_date:
+        type: string
+    type: object
+  models.Dropzone:
+    properties:
+      column:
+        $ref: '#/definitions/models.Column'
+      column_id:
+        type: integer
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        type: string
+      order:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.Kanban:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      end_date:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      start_date:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.Ticket:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      dropzone:
+        $ref: '#/definitions/models.Dropzone'
+      dropzone_id:
+        type: integer
+      id:
+        type: integer
+      kanban:
+        $ref: '#/definitions/models.Kanban'
+      kanban_id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.UpdateKanban:
+    properties:
+      end_date:
+        type: string
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /columns:
+    get:
+      consumes:
+      - application/json
+      description: Returns all columns
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.Column'
+              type: array
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get all columns
+      tags:
+      - GetColumns
+    post:
+      consumes:
+      - application/json
+      description: Create a new column
+      parameters:
+      - description: Column
+        in: body
+        name: column
+        required: true
+        schema:
+          $ref: '#/definitions/models.Column'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Column'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Create a new column
+      tags:
+      - CreateColumn
+  /columns/:id:
+    get:
+      consumes:
+      - application/json
+      description: Returns a column by id
+      parameters:
+      - description: Column ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Column'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get a column by id
+      tags:
+      - GetColumn
+    put:
+      consumes:
+      - application/json
+      description: Update a column
+      parameters:
+      - description: Column ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Column
+        in: body
+        name: column
+        required: true
+        schema:
+          $ref: '#/definitions/models.Column'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Column'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Update a column
+      tags:
+      - UpdateColumn
+  /dropzones:
+    get:
+      consumes:
+      - application/json
+      description: Returns all dropzones
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.Dropzone'
+              type: array
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get all dropzones
+      tags:
+      - Dropzones list
+    post:
+      consumes:
+      - application/json
+      description: Create a new dropzone
+      parameters:
+      - description: Dropzone
+        in: body
+        name: dropzone
+        required: true
+        schema:
+          $ref: '#/definitions/models.BaseDropzone'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Dropzone'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Create a new dropzone
+      tags:
+      - Create Dropzone
+  /dropzones/:id:
+    get:
+      consumes:
+      - application/json
+      description: Returns a dropzone by id
+      parameters:
+      - description: Dropzone ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Dropzone'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get a dropzone by id
+      tags:
+      - Get Dropzone
+    put:
+      consumes:
+      - application/json
+      description: Update a dropzone
+      parameters:
+      - description: Dropzone ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Dropzone
+        in: body
+        name: dropzone
+        required: true
+        schema:
+          $ref: '#/definitions/models.BaseDropzone'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Dropzone'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Update a dropzone
+      tags:
+      - Update Dropzone
+  /kanbans:
+    get:
+      consumes:
+      - application/json
+      description: Returns all kanbans
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.Kanban'
+              type: array
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: get all kanbans
+      tags:
+      - GetKanbans
+    post:
+      consumes:
+      - application/json
+      description: Create a new kanban
+      parameters:
+      - description: Kanban
+        in: body
+        name: kanban
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateKanban'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Kanban'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Create a new kanban
+      tags:
+      - CreateKanban
+  /kanbans/:id:
+    get:
+      consumes:
+      - application/json
+      description: Return a kanban by id
+      parameters:
+      - description: Kanban ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Kanban'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Return a kanban by id
+      tags:
+      - GetKanban
+    put:
+      consumes:
+      - application/json
+      description: Update a kanban
+      parameters:
+      - description: Kanban ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Kanban
+        in: body
+        name: kanban
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateKanban'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Kanban'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Update a kanban
+      tags:
+      - UpdateKanban
+  /tickets:
+    get:
+      consumes:
+      - application/json
+      description: Returns all tickets
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.Ticket'
+              type: array
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get all tickets
+      tags:
+      - Tickets list
+    post:
+      consumes:
+      - application/json
+      description: Create a new ticket
+      parameters:
+      - description: Ticket
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/models.BaseTicket'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Ticket'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Create a new ticket
+      tags:
+      - Create Ticket
+  /tickets/:id:
+    get:
+      consumes:
+      - application/json
+      description: Returns a ticket by id
+      parameters:
+      - description: Ticket ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Ticket'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get a ticket by id
+      tags:
+      - Get Ticket
+    put:
+      consumes:
+      - application/json
+      description: Update a ticket
+      parameters:
+      - description: Ticket ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Ticket
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/models.BaseTicket'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Ticket'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Update a ticket
+      tags:
+      - Update Ticket
+swagger: "2.0"
