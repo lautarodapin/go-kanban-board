@@ -18,8 +18,7 @@ import (
 // @Router /tickets [get]
 func GetTickets() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var tickets []models.Ticket
-		err := models.DB.Find(&tickets).Error
+		tickets, err := models.TicketManager.GetAll()
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
@@ -40,9 +39,8 @@ func GetTickets() gin.HandlerFunc {
 // @Router /tickets/:id [get]
 func GetTicket() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var ticket models.Ticket
 		id := ctx.Param("id")
-		err := models.DB.Preload("Kanban").Preload("Dropzone").First(&ticket, id).Error
+		ticket, err := models.TicketManager.GetById(id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
@@ -69,7 +67,7 @@ func CreateTicket() gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		err = models.DB.Create(&ticket).Error
+		err = models.TicketManager.Create(&ticket)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
@@ -91,14 +89,14 @@ func CreateTicket() gin.HandlerFunc {
 // @Router /tickets/:id [put]
 func UpdateTicket() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var ticket models.BaseTicket
+		var ticket models.Ticket
 		id := ctx.Param("id")
 		err := ctx.ShouldBindJSON(&ticket)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
 		}
-		err = models.DB.Model(models.Ticket{}).Where("id = ?", id).Updates(ticket).Error
+		err = models.TicketManager.Update(&ticket, id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
