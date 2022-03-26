@@ -1,10 +1,13 @@
 package models
 
 import (
+	"os"
 	"time"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"gorm.io/driver/postgres"
 )
 
 type BaseModel struct {
@@ -17,7 +20,17 @@ type BaseModel struct {
 var DB *gorm.DB
 
 func ConnectDatabase() {
-	database, err := gorm.Open(sqlite.Open("gorm.sqlite"), &gorm.Config{})
+	dsn := os.Getenv("DATABASE_URL")
+	var database *gorm.DB
+	var err error
+	if dsn == "" {
+		database, err = gorm.Open(sqlite.Open("gorm.sqlite"), &gorm.Config{})
+	} else {
+		database, err = gorm.Open(postgres.New(postgres.Config{
+			DSN:                  dsn,
+			PreferSimpleProtocol: true,
+		}), &gorm.Config{})
+	}
 
 	if err != nil {
 		panic("Failed to connect to database!")
