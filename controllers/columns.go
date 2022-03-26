@@ -57,7 +57,7 @@ func GetColumn() gin.HandlerFunc {
 // @Tags CreateColumn
 // @Accept json
 // @Produce json
-// @Param column body models.Column true "Column"
+// @Param column body models.BaseColumn true "Column"
 // @Success 200 {object} models.Column
 // @Failure 404 {string} error
 // @Router /columns [post]
@@ -85,7 +85,7 @@ func CreateColumn() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param id path string true "Column ID"
-// @Param column body models.Column true "Column"
+// @Param column body models.BaseColumn true "Column"
 // @Success 200 {object} models.Column
 // @Failure 404 {string} error
 // @Router /columns/:id [put]
