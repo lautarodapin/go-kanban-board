@@ -7,6 +7,13 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
+  models.BaseColumn:
+    properties:
+      name:
+        type: string
+      order:
+        type: integer
+    type: object
   models.BaseDropzone:
     properties:
       column_id:
@@ -153,7 +160,7 @@ paths:
         name: column
         required: true
         schema:
-          $ref: '#/definitions/models.Column'
+          $ref: '#/definitions/models.BaseColumn'
       produces:
       - application/json
       responses:
@@ -208,7 +215,7 @@ paths:
         name: column
         required: true
         schema:
-          $ref: '#/definitions/models.Column'
+          $ref: '#/definitions/models.BaseColumn'
       produces:
       - application/json
       responses:
