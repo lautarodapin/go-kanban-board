@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"gorm.io/driver/postgres"
 )
@@ -24,7 +25,9 @@ func ConnectDatabase() {
 	var database *gorm.DB
 	var err error
 	if dsn == "" {
-		database, err = gorm.Open(sqlite.Open("gorm.sqlite"), &gorm.Config{})
+		database, err = gorm.Open(sqlite.Open("gorm.sqlite"), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
 	} else {
 		database, err = gorm.Open(postgres.New(postgres.Config{
 			DSN:                  dsn,
