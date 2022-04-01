@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"kanban-board/models"
+	"kanban-board/serializers"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -39,7 +40,7 @@ func GetTickets() gin.HandlerFunc {
 // @Router /tickets/:id [get]
 func GetTicket() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		id := ctx.Param("id")
+		id := ctx.GetUint("id")
 		ticket, err := models.TicketManager.GetById(id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
@@ -55,20 +56,19 @@ func GetTicket() gin.HandlerFunc {
 // @Tags Create Ticket
 // @Accept json
 // @Produce json
-// @Param ticket body models.Ticket true "Ticket"
+// @Param ticket body serializers.TicketBody true "Ticket"
 // @Success 200 {object} models.Ticket
 // @Failure 404 {string} error
 // @Router /tickets [post]
 func CreateTicket() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var ticket models.Ticket
-		err := ctx.ShouldBindJSON(&ticket)
-		if err != nil {
+		var body serializers.TicketBody
+		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		err = models.TicketManager.Create(&ticket)
-		if err != nil {
+		ticket := body.ToModel()
+		if err := models.TicketManager.Create(&ticket); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
@@ -83,21 +83,20 @@ func CreateTicket() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param id path string true "Ticket ID"
-// @Param ticket body models.Ticket true "Ticket"
+// @Param ticket body serializers.TicketBody true "Ticket"
 // @Success 200 {object} models.Ticket
 // @Failure 404 {string} error
 // @Router /tickets/:id [put]
 func UpdateTicket() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var ticket models.Ticket
-		id := ctx.Param("id")
-		err := ctx.ShouldBindJSON(&ticket)
-		if err != nil {
+		var body serializers.TicketBody
+		id := ctx.GetUint("id")
+		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
 		}
-		err = models.TicketManager.Update(&ticket, id)
-		if err != nil {
+		ticket := body.ToModel()
+		if err := models.TicketManager.Update(&ticket, id); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
