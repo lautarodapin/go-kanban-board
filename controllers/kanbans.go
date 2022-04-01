@@ -3,6 +3,7 @@ package controllers
 import (
 	"kanban-board/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,8 +21,7 @@ import (
 // @Router /kanbans [get]
 func GetKanbans() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var kanbans []models.Kanban
-		err := models.DB.Find(&kanbans).Error
+		kanbans, err := models.KanbanManager.GetAll()
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
@@ -44,9 +44,8 @@ func GetKanbans() gin.HandlerFunc {
 // @Router /kanbans/:id [get]
 func GetKanban() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var kanban models.Kanban
-		id := ctx.Param("id")
-		err := models.DB.First(&kanban, id).Error
+		id := ctx.GetUint("id")
+		kanban, err := models.KanbanManager.GetById(id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
@@ -55,26 +54,35 @@ func GetKanban() gin.HandlerFunc {
 	}
 }
 
+type KanbanBody struct {
+	Name      string    `json:"name" binding:"required"`
+	StartDate time.Time `json:"start_date" binding:"required"`
+	EndDate   time.Time `json:"end_date" binding:"required"`
+}
+
 // @Summary Create a new kanban
 // @Schemes
 // @Description Create a new kanban
 // @Tags CreateKanban
 // @Accept json
 // @Produce json
-// @Param kanban body models.Kanban true "Kanban"
+// @Param kanban body KanbanBody true "Kanban"
 // @Success 200 {object} models.Kanban
 // @Failure 404 {string} error
 // @Router /kanbans [post]
 func CreateKanban() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var kanban models.Kanban
-		err := ctx.ShouldBindJSON(&kanban)
-		if err != nil {
+		var body KanbanBody
+		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		err = models.DB.Model(models.Kanban{}).Create(&kanban).Error
-		if err != nil {
+		kanban := models.Kanban{
+			Name:      body.Name,
+			StartDate: body.StartDate,
+			EndDate:   body.EndDate,
+		}
+		if err := models.KanbanManager.Create(&kanban); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
@@ -89,21 +97,24 @@ func CreateKanban() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param id path string true "Kanban ID"
-// @Param kanban body models.Kanban true "Kanban"
+// @Param kanban body KanbanBody true "Kanban"
 // @Success 200 {object} models.Kanban
 // @Failure 404 {string} error
 // @Router /kanbans/:id [put]
 func UpdateKanban() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var kanban models.Kanban
-		id := ctx.Param("id")
-		err := ctx.ShouldBindJSON(&kanban)
-		if err != nil {
+		var body KanbanBody
+		id := ctx.GetUint("id")
+		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		err = models.DB.Model(models.Kanban{}).Where("id = ?", id).Updates(&kanban).Error
-		if err != nil {
+		kanban := models.Kanban{
+			Name:      body.Name,
+			StartDate: body.StartDate,
+			EndDate:   body.EndDate,
+		}
+		if err := models.KanbanManager.Update(&kanban, id); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
