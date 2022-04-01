@@ -68,15 +68,15 @@ definitions:
     type: object
   serializers.ColumnBody:
     properties:
-      column_id:
-        type: integer
       name:
         maxLength: 255
         minLength: 3
         type: string
+      order:
+        type: integer
     required:
-    - column_id
     - name
+    - order
     type: object
   serializers.DropzoneBody:
     properties:

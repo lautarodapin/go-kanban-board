@@ -747,17 +747,17 @@ const docTemplate = `{
         "serializers.ColumnBody": {
             "type": "object",
             "required": [
-                "column_id",
-                "name"
+                "name",
+                "order"
             ],
             "properties": {
-                "column_id": {
-                    "type": "integer"
-                },
                 "name": {
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 3
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
