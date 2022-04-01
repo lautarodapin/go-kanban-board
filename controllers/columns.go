@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"kanban-board/models"
+	"kanban-board/serializers"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -39,9 +40,8 @@ func GetColumns() gin.HandlerFunc {
 // @Router /columns/:id [get]
 func GetColumn() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var column models.Column
-		id := ctx.Param("id")
-		err := models.DB.First(&column, id).Error
+		id := ctx.GetUint("id")
+		column, err := models.ColumnManager.GetById(id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
@@ -56,20 +56,19 @@ func GetColumn() gin.HandlerFunc {
 // @Tags CreateColumn
 // @Accept json
 // @Produce json
-// @Param column body models.Column true "Column"
+// @Param column body serializers.ColumnBody true "Column"
 // @Success 200 {object} models.Column
 // @Failure 404 {string} error
 // @Router /columns [post]
 func CreateColumn() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var column models.Column
-		err := ctx.BindJSON(&column)
-		if err != nil {
+		var body serializers.ColumnBody
+		if err := ctx.BindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		err = models.DB.Create(&column).Error
-		if err != nil {
+		column := body.ToModel()
+		if err := models.ColumnManager.Create(&column); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
 		}
@@ -84,21 +83,20 @@ func CreateColumn() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param id path string true "Column ID"
-// @Param column body models.Column true "Column"
+// @Param column body serializers.ColumnBody true "Column"
 // @Success 200 {object} models.Column
 // @Failure 404 {string} error
 // @Router /columns/:id [put]
 func UpdateColumn() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var column models.Column
-		id := ctx.Param("id")
-		err := ctx.ShouldBindJSON(&column)
-		if err != nil {
+		var body serializers.ColumnBody
+		id := ctx.GetUint("id")
+		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
 		}
-		err = models.DB.Model(&column).Where("id = ?", id).Updates(column).Error
-		if err != nil {
+		column := body.ToModel()
+		if err := models.ColumnManager.Update(&column, id); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}

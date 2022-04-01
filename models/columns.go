@@ -8,14 +8,14 @@ func (c *columnManager) Create(column *Column) error {
 	return DB.Create(&column).Error
 }
 
-func (c *columnManager) Update(column *Column, id string) error {
+func (c *columnManager) Update(column *Column, id uint) error {
 	return DB.Model(Column{}).
 		Where("id = ?", id).
 		Updates(column).
 		Error
 }
 
-func (c *columnManager) GetById(id string) (Column, error) {
+func (c *columnManager) GetById(id uint) (Column, error) {
 	var column Column
 	err := DB.First(&column, id).Error
 	return column, err
@@ -26,6 +26,6 @@ func (c *columnManager) GetAll() ([]Column, error) {
 	return columns, DB.Preload("Dropzones").Find(&columns).Error
 }
 
-func (c *columnManager) DeleteById(id string) error {
+func (c *columnManager) DeleteById(id uint) error {
 	return DB.Delete(&Column{}, id).Error
 }
