@@ -1,55 +1,5 @@
 definitions:
-  gorm.DeletedAt:
-    properties:
-      time:
-        type: string
-      valid:
-        description: Valid is true if Time is not NULL
-        type: boolean
-    type: object
-  models.BaseColumn:
-    properties:
-      name:
-        type: string
-      order:
-        type: integer
-    type: object
-  models.BaseDropzone:
-    properties:
-      column_id:
-        type: integer
-      name:
-        type: string
-      order:
-        type: integer
-    type: object
-  models.BaseTicket:
-    properties:
-      description:
-        type: string
-      dropzone_id:
-        type: integer
-      kanban_id:
-        type: integer
-      title:
-        type: string
-    type: object
-  models.Column:
-    properties:
-      created_at:
-        type: string
-      deleted_at:
-        $ref: '#/definitions/gorm.DeletedAt'
-      id:
-        type: integer
-      name:
-        type: string
-      order:
-        type: integer
-      updated_at:
-        type: string
-    type: object
-  models.CreateKanban:
+  controllers.KanbanBody:
     properties:
       end_date:
         type: string
@@ -57,6 +7,23 @@ definitions:
         type: string
       start_date:
         type: string
+    required:
+    - end_date
+    - name
+    - start_date
+    type: object
+  models.Column:
+    properties:
+      dropzones:
+        items:
+          $ref: '#/definitions/models.Dropzone'
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+      order:
+        type: integer
     type: object
   models.Dropzone:
     properties:
@@ -64,25 +31,15 @@ definitions:
         $ref: '#/definitions/models.Column'
       column_id:
         type: integer
-      created_at:
-        type: string
-      deleted_at:
-        $ref: '#/definitions/gorm.DeletedAt'
       id:
         type: integer
       name:
         type: string
       order:
         type: integer
-      updated_at:
-        type: string
     type: object
   models.Kanban:
     properties:
-      created_at:
-        type: string
-      deleted_at:
-        $ref: '#/definitions/gorm.DeletedAt'
       end_date:
         type: string
       id:
@@ -91,15 +48,9 @@ definitions:
         type: string
       start_date:
         type: string
-      updated_at:
-        type: string
     type: object
   models.Ticket:
     properties:
-      created_at:
-        type: string
-      deleted_at:
-        $ref: '#/definitions/gorm.DeletedAt'
       description:
         type: string
       dropzone:
@@ -114,15 +65,34 @@ definitions:
         type: integer
       title:
         type: string
-      updated_at:
-        type: string
     type: object
-  models.UpdateKanban:
+  serializers.ColumnBody:
     properties:
-      end_date:
-        type: string
+      column_id:
+        type: integer
       name:
+        maxLength: 255
+        minLength: 3
         type: string
+    required:
+    - column_id
+    - name
+    type: object
+  serializers.DropzoneBody:
+    properties:
+      column_id:
+        type: integer
+      name:
+        maxLength: 255
+        minLength: 3
+        type: string
+      order:
+        minimum: 0
+        type: integer
+    required:
+    - column_id
+    - name
+    - order
     type: object
 info:
   contact: {}
@@ -160,7 +130,7 @@ paths:
         name: column
         required: true
         schema:
-          $ref: '#/definitions/models.BaseColumn'
+          $ref: '#/definitions/serializers.ColumnBody'
       produces:
       - application/json
       responses:
@@ -215,7 +185,7 @@ paths:
         name: column
         required: true
         schema:
-          $ref: '#/definitions/models.BaseColumn'
+          $ref: '#/definitions/serializers.ColumnBody'
       produces:
       - application/json
       responses:
@@ -263,7 +233,7 @@ paths:
         name: dropzone
         required: true
         schema:
-          $ref: '#/definitions/models.BaseDropzone'
+          $ref: '#/definitions/serializers.DropzoneBody'
       produces:
       - application/json
       responses:
@@ -318,7 +288,7 @@ paths:
         name: dropzone
         required: true
         schema:
-          $ref: '#/definitions/models.BaseDropzone'
+          $ref: '#/definitions/serializers.DropzoneBody'
       produces:
       - application/json
       responses:
@@ -366,7 +336,7 @@ paths:
         name: kanban
         required: true
         schema:
-          $ref: '#/definitions/models.CreateKanban'
+          $ref: '#/definitions/controllers.KanbanBody'
       produces:
       - application/json
       responses:
@@ -421,7 +391,7 @@ paths:
         name: kanban
         required: true
         schema:
-          $ref: '#/definitions/models.UpdateKanban'
+          $ref: '#/definitions/controllers.KanbanBody'
       produces:
       - application/json
       responses:
@@ -469,7 +439,7 @@ paths:
         name: ticket
         required: true
         schema:
-          $ref: '#/definitions/models.BaseTicket'
+          $ref: '#/definitions/models.Ticket'
       produces:
       - application/json
       responses:
@@ -524,7 +494,7 @@ paths:
         name: ticket
         required: true
         schema:
-          $ref: '#/definitions/models.BaseTicket'
+          $ref: '#/definitions/models.Ticket'
       produces:
       - application/json
       responses:

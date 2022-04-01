@@ -69,7 +69,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BaseColumn"
+                            "$ref": "#/definitions/serializers.ColumnBody"
                         }
                     }
                 ],
@@ -152,7 +152,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BaseColumn"
+                            "$ref": "#/definitions/serializers.ColumnBody"
                         }
                     }
                 ],
@@ -225,7 +225,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BaseDropzone"
+                            "$ref": "#/definitions/serializers.DropzoneBody"
                         }
                     }
                 ],
@@ -308,7 +308,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BaseDropzone"
+                            "$ref": "#/definitions/serializers.DropzoneBody"
                         }
                     }
                 ],
@@ -381,7 +381,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.CreateKanban"
+                            "$ref": "#/definitions/controllers.KanbanBody"
                         }
                     }
                 ],
@@ -464,7 +464,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UpdateKanban"
+                            "$ref": "#/definitions/controllers.KanbanBody"
                         }
                     }
                 ],
@@ -537,7 +537,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BaseTicket"
+                            "$ref": "#/definitions/models.Ticket"
                         }
                     }
                 ],
@@ -620,7 +620,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.BaseTicket"
+                            "$ref": "#/definitions/models.Ticket"
                         }
                     }
                 ],
@@ -642,85 +642,13 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "gorm.DeletedAt": {
+        "controllers.KanbanBody": {
             "type": "object",
-            "properties": {
-                "time": {
-                    "type": "string"
-                },
-                "valid": {
-                    "description": "Valid is true if Time is not NULL",
-                    "type": "boolean"
-                }
-            }
-        },
-        "models.BaseColumn": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.BaseDropzone": {
-            "type": "object",
-            "properties": {
-                "column_id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.BaseTicket": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "dropzone_id": {
-                    "type": "integer"
-                },
-                "kanban_id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Column": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "deleted_at": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "integer"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.CreateKanban": {
-            "type": "object",
+            "required": [
+                "end_date",
+                "name",
+                "start_date"
+            ],
             "properties": {
                 "end_date": {
                     "type": "string"
@@ -730,6 +658,26 @@ const docTemplate = `{
                 },
                 "start_date": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Column": {
+            "type": "object",
+            "properties": {
+                "dropzones": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Dropzone"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
                 }
             }
         },
@@ -742,12 +690,6 @@ const docTemplate = `{
                 "column_id": {
                     "type": "integer"
                 },
-                "created_at": {
-                    "type": "string"
-                },
-                "deleted_at": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -756,21 +698,12 @@ const docTemplate = `{
                 },
                 "order": {
                     "type": "integer"
-                },
-                "updated_at": {
-                    "type": "string"
                 }
             }
         },
         "models.Kanban": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "deleted_at": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
                 "end_date": {
                     "type": "string"
                 },
@@ -782,21 +715,12 @@ const docTemplate = `{
                 },
                 "start_date": {
                     "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
                 }
             }
         },
         "models.Ticket": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "deleted_at": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
                 "description": {
                     "type": "string"
                 },
@@ -817,20 +741,45 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
                 }
             }
         },
-        "models.UpdateKanban": {
+        "serializers.ColumnBody": {
             "type": "object",
+            "required": [
+                "column_id",
+                "name"
+            ],
             "properties": {
-                "end_date": {
-                    "type": "string"
+                "column_id": {
+                    "type": "integer"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 3
+                }
+            }
+        },
+        "serializers.DropzoneBody": {
+            "type": "object",
+            "required": [
+                "column_id",
+                "name",
+                "order"
+            ],
+            "properties": {
+                "column_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 3
+                },
+                "order": {
+                    "type": "integer",
+                    "minimum": 0
                 }
             }
         }
