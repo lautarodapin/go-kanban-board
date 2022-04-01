@@ -7,6 +7,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type DropzoneBody struct {
+	Name     string `json:"name" binding:"required" validate:"required,min=3,max=255"`
+	ColumnID uint   `json:"column_id" binding:"required" validate:"required"`
+	Order    uint   `json:"order" binding:"required" validate:"required,min=0"`
+}
+
+func (body *DropzoneBody) ToModel() models.Dropzone {
+	return models.Dropzone{
+		Name:     body.Name,
+		ColumnID: body.ColumnID,
+		Order:    body.Order,
+	}
+}
+
 // @Summary Get all dropzones
 // @Schemes
 // @Description Returns all dropzones
@@ -50,12 +64,6 @@ func GetDropzone() gin.HandlerFunc {
 	}
 }
 
-type DropzoneBody struct {
-	Name     string `json:"name" binding:"required"`
-	ColumnID uint   `json:"column_id" binding:"required"`
-	Order    uint   `json:"order" binding:"required"`
-}
-
 // @Summary Create a new dropzone
 // @Schemes
 // @Description Create a new dropzone
@@ -73,11 +81,7 @@ func CreateDropzone() gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		dropzone := models.Dropzone{
-			Name:     body.Name,
-			ColumnID: body.ColumnID,
-			Order:    body.Order,
-		}
+		dropzone := body.ToModel()
 		if err := models.DropzoneManager.Create(&dropzone); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
@@ -105,11 +109,7 @@ func UpdateDropzone() gin.HandlerFunc {
 			return
 		}
 		id := ctx.Param("id")
-		dropzone := models.Dropzone{
-			Name:     body.Name,
-			ColumnID: body.ColumnID,
-			Order:    body.Order,
-		}
+		dropzone := body.ToModel()
 		if err := models.DropzoneManager.Update(&dropzone, id); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
