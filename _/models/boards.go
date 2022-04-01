@@ -25,6 +25,6 @@ func (k *boardManager) GetAll() ([]Board, error) {
 	return boards, DB.Preload("Columns").Find(&boards).Error
 }
 
-func (k *boardManager) DeleteById(id uint) error {
+func (k *boardManager) Delete(id uint) error {
 	return DB.Delete(&Board{}, id).Error
 }
