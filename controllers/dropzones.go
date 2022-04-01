@@ -2,24 +2,11 @@ package controllers
 
 import (
 	"kanban-board/models"
+	"kanban-board/serializers"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
-
-type DropzoneBody struct {
-	Name     string `json:"name" binding:"required" validate:"required,min=3,max=255"`
-	ColumnID uint   `json:"column_id" binding:"required" validate:"required"`
-	Order    uint   `json:"order" binding:"required" validate:"required,min=0"`
-}
-
-func (body *DropzoneBody) ToModel() models.Dropzone {
-	return models.Dropzone{
-		Name:     body.Name,
-		ColumnID: body.ColumnID,
-		Order:    body.Order,
-	}
-}
 
 // @Summary Get all dropzones
 // @Schemes
@@ -70,13 +57,13 @@ func GetDropzone() gin.HandlerFunc {
 // @Tags Create Dropzone
 // @Accept json
 // @Produce json
-// @Param dropzone body DropzoneBody true "Dropzone"
+// @Param dropzone body serializers.DropzoneBody true "Dropzone"
 // @Success 200 {object} models.Dropzone
 // @Failure 404 {string} error
 // @Router /dropzones [post]
 func CreateDropzone() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var body DropzoneBody
+		var body serializers.DropzoneBody
 		if err := ctx.BindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
@@ -97,13 +84,13 @@ func CreateDropzone() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param id path string true "Dropzone ID"
-// @Param dropzone body models.Dropzone true "Dropzone"
+// @Param dropzone body serializers.DropzoneBody true "Dropzone"
 // @Success 200 {object} models.Dropzone
 // @Failure 404 {string} error
 // @Router /dropzones/:id [put]
 func UpdateDropzone() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var body DropzoneBody
+		var body serializers.DropzoneBody
 		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
