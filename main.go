@@ -36,12 +36,12 @@ func main() {
 	// r.Use(CorsMiddleware())
 	docs.SwaggerInfo.BasePath = "/"
 
-	kanbans := r.Group("/kanbans")
+	boards := r.Group("/boards")
 	{
-		kanbans.GET("/", controllers.GetKanbans())
-		kanbans.POST("/", controllers.CreateKanban())
-		kanbans.GET("/:id", controllers.GetKanban())
-		kanbans.PUT("/:id", controllers.UpdateKanban())
+		boards.GET("/", controllers.GetBoards())
+		boards.POST("/", controllers.CreateBoard())
+		boards.GET("/:id", controllers.GetBoard())
+		boards.PUT("/:id", controllers.UpdateBoard())
 	}
 	dropzones := r.Group("/dropzones")
 	{

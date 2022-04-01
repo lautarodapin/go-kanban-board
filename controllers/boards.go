@@ -8,116 +8,116 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetKanbans returns all kanbans
+// Getboards returns all boards
 
-// @Summary get all kanbans
+// @Summary get all boards
 // @Schemes
-// @Description Returns all kanbans
-// @Tags GetKanbans
+// @Description Returns all boards
+// @Tags GetBoards
 // @Accept json
 // @Produce json
-// @Success 200 {array} []models.Kanban
+// @Success 200 {array} []models.Board
 // @Failure 404 {string} error
-// @Router /kanbans [get]
-func GetKanbans() gin.HandlerFunc {
+// @Router /boards [get]
+func GetBoards() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		kanbans, err := models.KanbanManager.GetAll()
+		boards, err := models.BoardManager.GetAll()
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
 		}
-		c.JSON(http.StatusOK, kanbans)
+		c.JSON(http.StatusOK, boards)
 	}
 }
 
-// GetKanban returns a kanban by id
+// GetBoard returns a Board by id
 
-// @Summary Return a kanban by id
+// @Summary Return a Board by id
 // @Schemes
-// @Description Return a kanban by id
-// @Tags GetKanban
+// @Description Return a Board by id
+// @Tags GetBoard
 // @Accept json
 // @Produce json
-// @Param id path string true "Kanban ID"
-// @Success 200 {object} models.Kanban
+// @Param id path string true "Board ID"
+// @Success 200 {object} models.Board
 // @Failure 404 {string} error
-// @Router /kanbans/:id [get]
-func GetKanban() gin.HandlerFunc {
+// @Router /boards/:id [get]
+func GetBoard() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := ctx.GetUint("id")
-		kanban, err := models.KanbanManager.GetById(id)
+		board, err := models.BoardManager.GetById(id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
 		}
-		ctx.JSON(http.StatusOK, kanban)
+		ctx.JSON(http.StatusOK, board)
 	}
 }
 
-type KanbanBody struct {
+type BoardBody struct {
 	Name      string    `json:"name" binding:"required"`
 	StartDate time.Time `json:"start_date" binding:"required"`
 	EndDate   time.Time `json:"end_date" binding:"required"`
 }
 
-// @Summary Create a new kanban
+// @Summary Create a new Board
 // @Schemes
-// @Description Create a new kanban
-// @Tags CreateKanban
+// @Description Create a new Board
+// @Tags CreateBoard
 // @Accept json
 // @Produce json
-// @Param kanban body KanbanBody true "Kanban"
-// @Success 200 {object} models.Kanban
+// @Param Board body BoardBody true "Board"
+// @Success 200 {object} models.Board
 // @Failure 404 {string} error
-// @Router /kanbans [post]
-func CreateKanban() gin.HandlerFunc {
+// @Router /boards [post]
+func CreateBoard() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var body KanbanBody
+		var body BoardBody
 		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		kanban := models.Kanban{
+		board := models.Board{
 			Name:      body.Name,
 			StartDate: body.StartDate,
 			EndDate:   body.EndDate,
 		}
-		if err := models.KanbanManager.Create(&kanban); err != nil {
+		if err := models.BoardManager.Create(&board); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		ctx.JSON(http.StatusOK, kanban)
+		ctx.JSON(http.StatusOK, board)
 	}
 }
 
-// @Summary Update a kanban
+// @Summary Update a board
 // @Schemes
-// @Description Update a kanban
-// @Tags UpdateKanban
+// @Description Update a board
+// @Tags UpdateBoard
 // @Accept json
 // @Produce json
-// @Param id path string true "Kanban ID"
-// @Param kanban body KanbanBody true "Kanban"
-// @Success 200 {object} models.Kanban
+// @Param id path string true "Board ID"
+// @Param board body BoardBody true "Board"
+// @Success 200 {object} models.Board
 // @Failure 404 {string} error
-// @Router /kanbans/:id [put]
-func UpdateKanban() gin.HandlerFunc {
+// @Router /boards/:id [put]
+func UpdateBoard() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var body KanbanBody
+		var body BoardBody
 		id := ctx.GetUint("id")
 		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		kanban := models.Kanban{
+		board := models.Board{
 			Name:      body.Name,
 			StartDate: body.StartDate,
 			EndDate:   body.EndDate,
 		}
-		if err := models.KanbanManager.Update(&kanban, id); err != nil {
+		if err := models.BoardManager.Update(&board, id); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		ctx.JSON(http.StatusOK, kanban)
+		ctx.JSON(http.StatusOK, board)
 	}
 }

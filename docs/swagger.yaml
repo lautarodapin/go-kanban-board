@@ -1,5 +1,5 @@
 definitions:
-  controllers.KanbanBody:
+  controllers.BoardBody:
     properties:
       end_date:
         type: string
@@ -11,6 +11,17 @@ definitions:
     - end_date
     - name
     - start_date
+    type: object
+  models.Board:
+    properties:
+      end_date:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      start_date:
+        type: string
     type: object
   models.Column:
     properties:
@@ -38,19 +49,12 @@ definitions:
       order:
         type: integer
     type: object
-  models.Kanban:
-    properties:
-      end_date:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      start_date:
-        type: string
-    type: object
   models.Ticket:
     properties:
+      board:
+        $ref: '#/definitions/models.Board'
+      board_id:
+        type: integer
       description:
         type: string
       dropzone:
@@ -58,10 +62,6 @@ definitions:
       dropzone_id:
         type: integer
       id:
-        type: integer
-      kanban:
-        $ref: '#/definitions/models.Kanban'
-      kanban_id:
         type: integer
       title:
         type: string
@@ -94,9 +94,127 @@ definitions:
     - name
     - order
     type: object
+  serializers.TicketBody:
+    properties:
+      board_id:
+        type: integer
+      description:
+        type: string
+      dropzone_id:
+        type: integer
+      title:
+        type: string
+    required:
+    - board_id
+    - dropzone_id
+    - title
+    type: object
 info:
   contact: {}
 paths:
+  /boards:
+    get:
+      consumes:
+      - application/json
+      description: Returns all boards
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.Board'
+              type: array
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: get all boards
+      tags:
+      - GetBoards
+    post:
+      consumes:
+      - application/json
+      description: Create a new Board
+      parameters:
+      - description: Board
+        in: body
+        name: Board
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.BoardBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Board'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Create a new Board
+      tags:
+      - CreateBoard
+  /boards/:id:
+    get:
+      consumes:
+      - application/json
+      description: Return a Board by id
+      parameters:
+      - description: Board ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Board'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Return a Board by id
+      tags:
+      - GetBoard
+    put:
+      consumes:
+      - application/json
+      description: Update a board
+      parameters:
+      - description: Board ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Board
+        in: body
+        name: board
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.BoardBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Board'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Update a board
+      tags:
+      - UpdateBoard
   /columns:
     get:
       consumes:
@@ -303,109 +421,6 @@ paths:
       summary: Update a dropzone
       tags:
       - Update Dropzone
-  /kanbans:
-    get:
-      consumes:
-      - application/json
-      description: Returns all kanbans
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              items:
-                $ref: '#/definitions/models.Kanban'
-              type: array
-            type: array
-        "404":
-          description: Not Found
-          schema:
-            type: string
-      summary: get all kanbans
-      tags:
-      - GetKanbans
-    post:
-      consumes:
-      - application/json
-      description: Create a new kanban
-      parameters:
-      - description: Kanban
-        in: body
-        name: kanban
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.KanbanBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Kanban'
-        "404":
-          description: Not Found
-          schema:
-            type: string
-      summary: Create a new kanban
-      tags:
-      - CreateKanban
-  /kanbans/:id:
-    get:
-      consumes:
-      - application/json
-      description: Return a kanban by id
-      parameters:
-      - description: Kanban ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Kanban'
-        "404":
-          description: Not Found
-          schema:
-            type: string
-      summary: Return a kanban by id
-      tags:
-      - GetKanban
-    put:
-      consumes:
-      - application/json
-      description: Update a kanban
-      parameters:
-      - description: Kanban ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Kanban
-        in: body
-        name: kanban
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.KanbanBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Kanban'
-        "404":
-          description: Not Found
-          schema:
-            type: string
-      summary: Update a kanban
-      tags:
-      - UpdateKanban
   /tickets:
     get:
       consumes:
@@ -439,7 +454,7 @@ paths:
         name: ticket
         required: true
         schema:
-          $ref: '#/definitions/models.Ticket'
+          $ref: '#/definitions/serializers.TicketBody'
       produces:
       - application/json
       responses:
@@ -494,7 +509,7 @@ paths:
         name: ticket
         required: true
         schema:
-          $ref: '#/definitions/models.Ticket'
+          $ref: '#/definitions/serializers.TicketBody'
       produces:
       - application/json
       responses:

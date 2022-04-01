@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type Kanban struct {
+type Board struct {
 	BaseModel
 	Name      string    `json:"name" gorm:"type:varchar(255);not null"`
 	StartDate time.Time `json:"start_date" gorm:"not null"`
@@ -28,8 +28,8 @@ type Ticket struct {
 	BaseModel
 	Title       string   `json:"title" gorm:"type:varchar(255);not null"`
 	Description string   `json:"description" gorm:"type:varchar(1025)"`
-	KanbanID    uint     `json:"kanban_id" gorm:"type:integer"`
+	BoardID     uint     `json:"board_id" gorm:"type:integer"`
 	DropzoneID  uint     `json:"dropzone_id" gorm:"type:integer; not null"`
-	Kanban      Kanban   `json:"kanban" gorm:"foreignkey:KanbanID"`
+	Board       Board    `json:"board" gorm:"foreignkey:BoardID"`
 	Dropzone    Dropzone `json:"dropzone" gorm:"foreignkey:DropzoneID"`
 }
