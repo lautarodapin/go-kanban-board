@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "kanban",
+            "database": "./gorm.sqlite"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
