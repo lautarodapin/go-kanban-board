@@ -7,5 +7,6 @@
             "database": "./gorm.sqlite"
         }
     ],
-    "sqltools.useNodeRuntime": true
+    "sqltools.useNodeRuntime": true,
+    "python.formatting.provider": "autopep8"
 }
