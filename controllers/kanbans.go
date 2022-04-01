@@ -61,13 +61,13 @@ func GetKanban() gin.HandlerFunc {
 // @Tags CreateKanban
 // @Accept json
 // @Produce json
-// @Param kanban body models.CreateKanban true "Kanban"
+// @Param kanban body models.Kanban true "Kanban"
 // @Success 200 {object} models.Kanban
 // @Failure 404 {string} error
 // @Router /kanbans [post]
 func CreateKanban() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var kanban models.CreateKanban
+		var kanban models.Kanban
 		err := ctx.ShouldBindJSON(&kanban)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
@@ -89,13 +89,13 @@ func CreateKanban() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param id path string true "Kanban ID"
-// @Param kanban body models.UpdateKanban true "Kanban"
+// @Param kanban body models.Kanban true "Kanban"
 // @Success 200 {object} models.Kanban
 // @Failure 404 {string} error
 // @Router /kanbans/:id [put]
 func UpdateKanban() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var kanban models.UpdateKanban
+		var kanban models.Kanban
 		id := ctx.Param("id")
 		err := ctx.ShouldBindJSON(&kanban)
 		if err != nil {

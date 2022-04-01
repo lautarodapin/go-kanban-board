@@ -18,8 +18,7 @@ import (
 // @Router /dropzones [get]
 func GetDropzones() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var dropzones []models.Dropzone
-		err := models.DB.Find(&dropzones).Error
+		dropzones, err := models.DropzoneManager.GetAll()
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
@@ -42,7 +41,7 @@ func GetDropzone() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var dropzone models.Dropzone
 		id := ctx.Param("id")
-		err := models.DB.Preload("Column").First(&dropzone, id).Error
+		dropzone, err := models.DropzoneManager.GetById(id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
@@ -51,26 +50,35 @@ func GetDropzone() gin.HandlerFunc {
 	}
 }
 
+type DropzoneBody struct {
+	Name     string `json:"name" binding:"required"`
+	ColumnID uint   `json:"column_id" binding:"required"`
+	Order    uint   `json:"order" binding:"required"`
+}
+
 // @Summary Create a new dropzone
 // @Schemes
 // @Description Create a new dropzone
 // @Tags Create Dropzone
 // @Accept json
 // @Produce json
-// @Param dropzone body models.BaseDropzone true "Dropzone"
+// @Param dropzone body DropzoneBody true "Dropzone"
 // @Success 200 {object} models.Dropzone
 // @Failure 404 {string} error
 // @Router /dropzones [post]
 func CreateDropzone() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var dropzone models.BaseDropzone
-		err := ctx.BindJSON(&dropzone)
-		if err != nil {
+		var body DropzoneBody
+		if err := ctx.BindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		err = models.DB.Create(&dropzone).Error
-		if err != nil {
+		dropzone := models.Dropzone{
+			Name:     body.Name,
+			ColumnID: body.ColumnID,
+			Order:    body.Order,
+		}
+		if err := models.DropzoneManager.Create(&dropzone); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
@@ -85,21 +93,24 @@ func CreateDropzone() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param id path string true "Dropzone ID"
-// @Param dropzone body models.BaseDropzone true "Dropzone"
+// @Param dropzone body models.Dropzone true "Dropzone"
 // @Success 200 {object} models.Dropzone
 // @Failure 404 {string} error
 // @Router /dropzones/:id [put]
 func UpdateDropzone() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var dropzone models.BaseDropzone
-		id := ctx.Param("id")
-		err := ctx.ShouldBindJSON(&dropzone)
-		if err != nil {
+		var body DropzoneBody
+		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return
 		}
-		err = models.DB.Model(models.Dropzone{}).Where("id = ?", id).Updates(dropzone).Error
-		if err != nil {
+		id := ctx.Param("id")
+		dropzone := models.Dropzone{
+			Name:     body.Name,
+			ColumnID: body.ColumnID,
+			Order:    body.Order,
+		}
+		if err := models.DropzoneManager.Update(&dropzone, id); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
 		}

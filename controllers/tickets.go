@@ -55,7 +55,7 @@ func GetTicket() gin.HandlerFunc {
 // @Tags Create Ticket
 // @Accept json
 // @Produce json
-// @Param ticket body models.BaseTicket true "Ticket"
+// @Param ticket body models.Ticket true "Ticket"
 // @Success 200 {object} models.Ticket
 // @Failure 404 {string} error
 // @Router /tickets [post]
@@ -83,7 +83,7 @@ func CreateTicket() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param id path string true "Ticket ID"
-// @Param ticket body models.BaseTicket true "Ticket"
+// @Param ticket body models.Ticket true "Ticket"
 // @Success 200 {object} models.Ticket
 // @Failure 404 {string} error
 // @Router /tickets/:id [put]

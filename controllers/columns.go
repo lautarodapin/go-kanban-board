@@ -18,8 +18,7 @@ import (
 // @Router /columns [get]
 func GetColumns() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var columns []models.Column
-		err := models.DB.Find(&columns).Error
+		columns, err := models.ColumnManager.GetAll()
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
@@ -57,7 +56,7 @@ func GetColumn() gin.HandlerFunc {
 // @Tags CreateColumn
 // @Accept json
 // @Produce json
-// @Param column body models.BaseColumn true "Column"
+// @Param column body models.Column true "Column"
 // @Success 200 {object} models.Column
 // @Failure 404 {string} error
 // @Router /columns [post]
@@ -85,7 +84,7 @@ func CreateColumn() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param id path string true "Column ID"
-// @Param column body models.BaseColumn true "Column"
+// @Param column body models.Column true "Column"
 // @Success 200 {object} models.Column
 // @Failure 404 {string} error
 // @Router /columns/:id [put]
