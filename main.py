@@ -5,6 +5,7 @@ import columns.router
 from models.database import create_db_and_tables
 import tickets.router
 
+
 def create_app():
     app = FastAPI()
     app.include_router(boards.router.api)
@@ -13,5 +14,10 @@ def create_app():
     app.include_router(tickets.router.api)
     return app
 
+
 app = create_app()
-create_db_and_tables()
+
+
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()

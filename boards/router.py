@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
+from sqlmodel.ext.asyncio.session import AsyncSession
 from models.database import engine
 
 from .models import Board
@@ -17,26 +18,35 @@ async def get_boards():
 @api.get('/{board_id}', response_model=Board)
 async def get_board(board_id: int):
     with Session(engine) as session:
-        result = session.exec(select(Board).where(Board.id == board_id))
-    return result[0]
+        result = session.exec(select(Board).where(
+            Board.id == board_id)).first()
+        if result:
+            return result
+    raise HTTPException(404, 'Board not found')
 
 
 @api.post('/', response_model=Board)
 async def create_board(board: Board):
     with Session(engine) as session:
-        session.add(board)
-        await session.commit()
-    return board
+        board_db = Board.from_orm(board)
+        session.add(board_db)
+        session.commit()
+        session.refresh(board_db)
+    return board_db
 
 
 @api.put('/{board_id}', response_model=Board)
 async def update_board(board_id: int, board: Board):
     with Session(engine) as session:
-        board_db = session.exec(select(Board).where(Board.id == board_id))
-        board_db = Board(**board.dict())
-        board_db.id = board_id
+        board_db = session.get(Board, board_id)
+        if board_db is None:
+            raise HTTPException(404, 'Board not found')
+
+        for k, v in board.dict(exclude_unset=True).items():
+            setattr(board_db, k, v)
         session.add(board_db)
         session.commit()
+        session.refresh(board_db)
     return board_db
 
 

@@ -10,4 +10,9 @@
     "sqltools.useNodeRuntime": true,
     "python.formatting.provider": "autopep8",
     "editor.formatOnSave": true,
+    "python.formatting.blackArgs": [
+        "--line-length",
+        "120",
+        "--skip-string-normalization"
+    ],
 }

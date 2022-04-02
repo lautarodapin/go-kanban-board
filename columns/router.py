@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlmodel import select, Session
 from models.database import engine
 
@@ -18,23 +18,36 @@ async def get_columns():
 @api.get('/{column_id}', response_model=Column)
 async def get_column(column_id: int):
     with Session(engine) as session:
-        result = session.exec(select(Column).where(Column.id == column_id))
-    return result[0]
+        result = session.exec(select(Column).where(
+            Column.id == column_id)).first()
+    if result:
+        return result
+    raise HTTPException(404, 'Column not found')
 
 
 @api.post('/', response_model=Column)
 async def create_column(column: Column):
     with Session(engine) as session:
-        session.add(column)
-        await session.commit()
-    return column
+        column_db = Column.from_orm(column)
+        session.add(column_db)
+        session.commit()
+        session.refresh(column_db)
+    return column_db
 
 
 @api.put('/{column_id}', response_model=Column)
 async def update_column(column_id: int, column: Column):
     with Session(engine) as session:
-        session.update(column, where=Column.id == column_id)
-    return column
+        column_db = session.get(Column, column_id)
+        if column_db is None:
+            raise HTTPException(404, 'Column not found')
+
+        for k, v in column.dict(exclude_unset=True).items():
+            setattr(column_db, k, v)
+        session.add(column_db)
+        session.commit()
+        session.refresh(column_db)
+    return column_db
 
 
 @api.delete('/{column_id}')
