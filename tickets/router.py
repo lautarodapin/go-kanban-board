@@ -24,13 +24,15 @@ async def get_ticket(ticket_id: int):
 @api.post('/', response_model=Ticket)
 async def create_ticket(ticket: Ticket):
     with Session(engine) as session:
-        session.insert(ticket)
+        session.add(ticket)
+        await session.commit()
     return ticket
 
 
 @api.put('/{ticket_id}', response_model=Ticket)
 async def update_ticket(ticket_id: int, ticket: Ticket):
     with Session(engine) as session:
+        session.add
         session.update(ticket, where=Ticket.id == ticket_id)
     return ticket
 
