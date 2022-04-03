@@ -19,3 +19,11 @@ class Ticket(BaseTicket, table=True):
 
     dropzone: Optional["Dropzone"] = Relationship(back_populates="tickets")
     board: Optional["Board"] = Relationship(back_populates="tickets")
+
+
+class CreateTicket(BaseTicket):
+    ...
+
+
+class UpdateTicket(BaseTicket):
+    ...

@@ -3,7 +3,7 @@ from sqlalchemy import column
 from sqlmodel import select, Session
 from database.db import engine, get_async_session, AsyncSession
 
-from .models import Column
+from .models import Column, CreateColumn, UpdateColumn
 
 
 api = APIRouter(prefix='/columns')
@@ -29,7 +29,7 @@ async def get_column(
 
 @api.post('/', response_model=Column)
 async def create_column(
-    column: Column,
+    column: CreateColumn,
     session: AsyncSession = Depends(get_async_session),
 ):
     column_db = Column.from_orm(column)
@@ -42,7 +42,7 @@ async def create_column(
 @api.put('/{column_id}', response_model=Column)
 async def update_column(
     column_id: int,
-    column: Column,
+    column: UpdateColumn,
     session: AsyncSession = Depends(get_async_session),
 ):
     column_db = await session.get(Column, column_id)

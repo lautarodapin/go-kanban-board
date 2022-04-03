@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select, Session
 from database.db import engine, get_async_session, AsyncSession
-from .models import Dropzone
+from .models import CreateDropzone, Dropzone, UpdateDropzone
 
 
 api = APIRouter(prefix='/dropzones')
@@ -27,7 +27,7 @@ async def get_dropzone(
 
 @api.post('/', response_model=Dropzone)
 async def create_dropzone(
-    dropzone: Dropzone,
+    dropzone: CreateDropzone,
     session: AsyncSession = Depends(get_async_session),
 ):
     dropzone_db = Dropzone.from_orm(dropzone)
@@ -40,7 +40,7 @@ async def create_dropzone(
 @api.put('/{dropzone_id}', response_model=Dropzone)
 async def update_dropzone(
     dropzone_id: int,
-    dropzone: Dropzone,
+    dropzone: UpdateDropzone,
     session: AsyncSession = Depends(get_async_session),
 ):
     dropzone_db = await session.get(Dropzone, dropzone_id)

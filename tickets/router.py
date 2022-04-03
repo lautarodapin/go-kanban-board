@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
 from database.db import engine, get_async_session, AsyncSession
-from .models import Ticket
+from .models import CreateTicket, Ticket, UpdateTicket
 
 api = APIRouter(prefix='/tickets')
 
@@ -27,7 +27,7 @@ async def get_ticket(
 
 @api.post('/', response_model=Ticket)
 async def create_ticket(
-    ticket: Ticket,
+    ticket: CreateTicket,
     session: AsyncSession = Depends(get_async_session),
 ):
     ticket_db = Ticket.from_orm(ticket)
@@ -39,8 +39,8 @@ async def create_ticket(
 
 @api.put('/{ticket_id}', response_model=Ticket)
 async def update_ticket(
-        ticket_id: int,
-        ticket: Ticket,
+    ticket_id: int,
+    ticket: UpdateTicket,
     session: AsyncSession = Depends(get_async_session),
 ):
     ticket_db = await session.get(Ticket, ticket_id)

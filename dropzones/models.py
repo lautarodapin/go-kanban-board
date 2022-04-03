@@ -17,3 +17,11 @@ class Dropzone(BaseDropzone, table=True):
     id: Optional[int] = Field(None, primary_key=True)
     column: Optional["Column"] = Relationship(back_populates="dropzones")
     tickets: List["Ticket"] = Relationship(back_populates="dropzone")
+
+
+class CreateDropzone(BaseDropzone):
+    ...
+
+
+class UpdateDropzone(BaseDropzone):
+    ...
