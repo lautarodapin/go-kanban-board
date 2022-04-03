@@ -31,7 +31,7 @@ async def create_dropzone(
     session: AsyncSession = Depends(get_async_session),
 ):
     dropzone_db = Dropzone.from_orm(dropzone)
-    await session.add(dropzone_db)
+    session.add(dropzone_db)
     await session.commit()
     await session.refresh(dropzone_db)
     return dropzone_db
@@ -49,7 +49,7 @@ async def update_dropzone(
 
     for k, v in dropzone.dict(exclude_unset=True).items():
         setattr(dropzone_db, k, v)
-    await session.add(dropzone_db)
+    session.add(dropzone_db)
     await session.commit()
     await session.refresh(dropzone_db)
     return dropzone_db

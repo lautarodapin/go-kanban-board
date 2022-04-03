@@ -31,7 +31,7 @@ async def create_ticket(
     session: AsyncSession = Depends(get_async_session),
 ):
     ticket_db = Ticket.from_orm(ticket)
-    await session.add(ticket_db)
+    session.add(ticket_db)
     await session.commit()
     await session.refresh(ticket_db)
     return ticket_db
@@ -49,7 +49,7 @@ async def update_ticket(
 
     for k, v in ticket.dict(exclude_unset=True).items():
         setattr(ticket_db, k, v)
-    await session.add(ticket_db)
+    session.add(ticket_db)
     await session.commit()
     await session.refresh(ticket_db)
     return ticket_db
