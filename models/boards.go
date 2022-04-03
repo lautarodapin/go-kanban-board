@@ -8,14 +8,14 @@ func (k *boardManager) Create(board *Board) error {
 	return DB.Create(&board).Error
 }
 
-func (k *boardManager) Update(board *Board, id uint) error {
+func (k *boardManager) Update(board *Board, id uint64) error {
 	return DB.Model(Board{}).
 		Where("id = ?", id).
 		Updates(board).
 		Error
 }
 
-func (k *boardManager) GetById(id uint) (Board, error) {
+func (k *boardManager) GetById(id uint64) (Board, error) {
 	var board Board
 	return board, DB.Preload("Columns").First(&board, id).Error
 }
@@ -25,6 +25,6 @@ func (k *boardManager) GetAll() ([]Board, error) {
 	return boards, DB.Preload("Columns").Find(&boards).Error
 }
 
-func (k *boardManager) DeleteById(id uint) error {
+func (k *boardManager) DeleteById(id uint64) error {
 	return DB.Delete(&Board{}, id).Error
 }

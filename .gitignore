@@ -1,3 +1,4 @@
+_/
 .env
 .docker_build/
 bin/.air.toml

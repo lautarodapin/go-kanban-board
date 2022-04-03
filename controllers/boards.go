@@ -3,6 +3,7 @@ package controllers
 import (
 	"kanban-board/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +45,11 @@ func GetBoards() gin.HandlerFunc {
 // @Router /boards/:id [get]
 func GetBoard() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		id := ctx.GetUint("id")
+		id, err := strconv.ParseUint(ctx.Param("id"), 0, 64)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
 		board, err := models.BoardManager.GetById(id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
@@ -103,8 +108,12 @@ func CreateBoard() gin.HandlerFunc {
 // @Router /boards/:id [put]
 func UpdateBoard() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		id, err := strconv.ParseUint(ctx.Param("id"), 0, 64)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
 		var body BoardBody
-		id := ctx.GetUint("id")
 		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 			return

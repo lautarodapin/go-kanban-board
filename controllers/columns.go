@@ -4,6 +4,7 @@ import (
 	"kanban-board/models"
 	"kanban-board/serializers"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,7 +41,11 @@ func GetColumns() gin.HandlerFunc {
 // @Router /columns/:id [get]
 func GetColumn() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		id := ctx.GetUint("id")
+		id, err := strconv.ParseUint(ctx.Param("id"), 0, 64)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
 		column, err := models.ColumnManager.GetById(id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
@@ -90,7 +95,11 @@ func CreateColumn() gin.HandlerFunc {
 func UpdateColumn() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var body serializers.ColumnBody
-		id := ctx.GetUint("id")
+		id, err := strconv.ParseUint(ctx.Param("id"), 0, 64)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
 		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return

@@ -8,14 +8,14 @@ func (t *ticketManager) Create(ticket *Ticket) error {
 	return DB.Create(&ticket).Error
 }
 
-func (t *ticketManager) Update(ticket *Ticket, id uint) error {
+func (t *ticketManager) Update(ticket *Ticket, id uint64) error {
 	return DB.Model(Ticket{}).
 		Where("id = ?", id).
 		Updates(ticket).
 		Error
 }
 
-func (t *ticketManager) GetById(id uint) (Ticket, error) {
+func (t *ticketManager) GetById(id uint64) (Ticket, error) {
 	var ticket Ticket
 	err := DB.Preload("Kanban").Preload("Dropzone").First(&ticket, id).Error
 	return ticket, err

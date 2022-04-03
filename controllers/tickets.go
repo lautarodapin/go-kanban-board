@@ -4,6 +4,7 @@ import (
 	"kanban-board/models"
 	"kanban-board/serializers"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,7 +41,12 @@ func GetTickets() gin.HandlerFunc {
 // @Router /tickets/:id [get]
 func GetTicket() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		id := ctx.GetUint("id")
+		id, err := strconv.ParseUint(ctx.Param("id"), 0, 64)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
+
 		ticket, err := models.TicketManager.GetById(id)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
@@ -89,8 +95,12 @@ func CreateTicket() gin.HandlerFunc {
 // @Router /tickets/:id [put]
 func UpdateTicket() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		id, err := strconv.ParseUint(ctx.Param("id"), 0, 64)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
 		var body serializers.TicketBody
-		id := ctx.GetUint("id")
 		if err := ctx.ShouldBindJSON(&body); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
