@@ -1,8 +1,8 @@
 from typing import List
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from models.database import engine
+from database.db import engine, async_engine, get_async_session
 
 from .models import Board, CreateBoard
 
@@ -11,18 +11,17 @@ api = APIRouter(prefix='/boards')
 
 @api.get('/', response_model=list[Board])
 async def get_boards():
-    with Session(engine) as session:
-        results = session.exec(select(Board)).fetchall()
+    async with AsyncSession(async_engine) as session:
+        results = (await session.exec(select(Board))).fetchall()
     return results
 
 
 @api.get('/{board_id}', response_model=Board)
-async def get_board(board_id: int):
-    with Session(engine) as session:
-        result = session.exec(select(Board).where(
-            Board.id == board_id)).first()
-        if result:
-            return result
+async def get_board(board_id: int, session: AsyncSession = Depends(get_async_session)):
+    result = (await session.exec(select(Board).where(
+        Board.id == board_id))).first()
+    if result:
+        return result
     raise HTTPException(404, 'Board not found')
 
 

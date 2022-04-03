@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
-from models.database import engine
+from database.db import engine
 from .models import Ticket
 
 api = APIRouter(prefix='/tickets')

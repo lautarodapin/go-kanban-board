@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select, Session
-from models.database import engine
+from database.db import engine
 
 from .models import Column
 

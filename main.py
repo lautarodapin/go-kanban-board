@@ -2,7 +2,7 @@ from fastapi import FastAPI
 import boards.router
 import dropzones.router
 import columns.router
-from models.database import create_db_and_tables
+from database.db import create_db_and_tables
 import tickets.router
 
 
