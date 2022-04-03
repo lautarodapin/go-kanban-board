@@ -1,55 +1,65 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
 
-from database.db import engine
+from database.db import engine, get_async_session, AsyncSession
 from .models import Ticket
 
 api = APIRouter(prefix='/tickets')
 
 
 @api.get('/', response_model=list[Ticket])
-async def get_tickets():
-    with Session(engine) as session:
-        results = session.exec(select(Ticket)).fetchall()
-    return results
+async def get_tickets(
+    session: AsyncSession = Depends(get_async_session),
+):
+    return (await session.exec(select(Ticket))).fetchall()
 
 
 @api.get('/{ticket_id}', response_model=Ticket)
-async def get_ticket(ticket_id: int):
-    with Session(engine) as session:
-        result = session.exec(select(Ticket).where(
-            Ticket.id == ticket_id)).first()
+async def get_ticket(
+    ticket_id: int,
+    session: AsyncSession = Depends(get_async_session),
+):
+    result = await session.get(Ticket, ticket_id)
     if result:
         return result
     raise HTTPException(404, 'Ticket not found')
 
 
 @api.post('/', response_model=Ticket)
-async def create_ticket(ticket: Ticket):
-    with Session(engine) as session:
-        ticket_db = Ticket.from_orm(ticket)
-        session.add(ticket_db)
-        session.commit()
-        session.refresh(ticket_db)
+async def create_ticket(
+    ticket: Ticket,
+    session: AsyncSession = Depends(get_async_session),
+):
+    ticket_db = Ticket.from_orm(ticket)
+    await session.add(ticket_db)
+    await session.commit()
+    await session.refresh(ticket_db)
     return ticket_db
 
 
 @api.put('/{ticket_id}', response_model=Ticket)
-async def update_ticket(ticket_id: int, ticket: Ticket):
-    with Session(engine) as session:
-        ticket_db = session.get(Ticket, ticket_id)
-        if ticket_db is None:
-            raise HTTPException(404, 'Ticket not found')
+async def update_ticket(
+        ticket_id: int,
+        ticket: Ticket,
+    session: AsyncSession = Depends(get_async_session),
+):
+    ticket_db = await session.get(Ticket, ticket_id)
+    if ticket_db is None:
+        raise HTTPException(404, 'Ticket not found')
 
-        for k, v in ticket.dict(exclude_unset=True).items():
-            setattr(ticket_db, k, v)
-        session.add(ticket_db)
-        session.commit()
-        session.refresh(ticket_db)
+    for k, v in ticket.dict(exclude_unset=True).items():
+        setattr(ticket_db, k, v)
+    await session.add(ticket_db)
+    await session.commit()
+    await session.refresh(ticket_db)
     return ticket_db
 
 
 @api.delete('/{ticket_id}')
-async def delete_ticket(ticket_id: int):
-    with Session(engine) as session:
-        session.delete(Ticket, where=Ticket.id == ticket_id)
+async def delete_ticket(
+    ticket_id: int,
+    session: AsyncSession = Depends(get_async_session),
+):
+    ticket_db = await session.get(Ticket, ticket_id)
+    await session.delete(ticket_db)
+    await session.commit()
