@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Optional
-from sqlmodel import Relationship, SQLModel, Field
+import enum
+from sqlmodel import Relationship, SQLModel, Field, Enum, Column
 
 
 if TYPE_CHECKING:
@@ -7,11 +8,17 @@ if TYPE_CHECKING:
     from dropzones.models import Dropzone
 
 
+class TicketType(str, enum.Enum):
+    bug = "bug"
+    feature = "feature"
+    task = "task"
+
+
 class BaseTicket(SQLModel):
     title: str
     description: Optional[str]
     dropzone_id: Optional[int] = Field(None, foreign_key='dropzone.id')
-    board_id: Optional[int] = Field(None, foreign_key='board.id')
+    type: TicketType = Field(sa_column=Column(Enum(TicketType)))
 
 
 class Ticket(BaseTicket, table=True):
