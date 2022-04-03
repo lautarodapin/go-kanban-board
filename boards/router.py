@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from database.db import engine, async_engine, get_async_session
 
-from .models import Board, CreateBoard
+from .models import Board, CreateBoard, UpdateBoard
 
 api = APIRouter(prefix='/boards')
 
@@ -41,7 +41,7 @@ async def create_board(
 @api.put('/{board_id}', response_model=Board)
 async def update_board(
     board_id: int,
-    board: Board,
+    board: UpdateBoard,
     session: AsyncSession = Depends(get_async_session),
 ):
     board_db = await session.get(Board, board_id)
