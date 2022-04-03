@@ -11,7 +11,7 @@ api = APIRouter(prefix='/columns')
 @api.get('/', response_model=list[Column])
 async def get_columns():
     with Session(engine) as session:
-        results = session.exec(select(Column))
+        results = session.exec(select(Column)).fetchall()
     return results
 
 

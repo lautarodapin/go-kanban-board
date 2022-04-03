@@ -1,12 +1,16 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 from sqlmodel import Relationship, SQLModel, Field
 
 
 if TYPE_CHECKING:
-    pass
+    from dropzones.models import Dropzone
 
 
-class Column(SQLModel, table=True):
-    id: Optional[int] = Field(None, primary_key=True)
+class BaseColumn(SQLModel):
     name: str
     order: int
+
+
+class Column(BaseColumn, table=True):
+    id: Optional[int] = Field(None, primary_key=True)
+    dropzones: List["Dropzone"] = Relationship(back_populates="column")

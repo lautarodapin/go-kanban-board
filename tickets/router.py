@@ -10,7 +10,7 @@ api = APIRouter(prefix='/tickets')
 @api.get('/', response_model=list[Ticket])
 async def get_tickets():
     with Session(engine) as session:
-        results = session.exec(select(Ticket))
+        results = session.exec(select(Ticket)).fetchall()
     return results
 
 

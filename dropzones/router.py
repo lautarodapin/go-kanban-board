@@ -10,7 +10,7 @@ api = APIRouter(prefix='/dropzones')
 @api.get('/', response_model=list[Dropzone])
 async def get_dropzones():
     with Session(engine) as session:
-        results = session.exec(select(Dropzone))
+        results = session.exec(select(Dropzone)).fetchall()
     return results
 
 

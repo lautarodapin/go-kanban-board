@@ -14,6 +14,18 @@
             "type": "shell",
             "command": "air",
             "problemMatcher": []
+        },
+        {
+            "label": "Uvicorn fast api 8000",
+            "type": "shell",
+            "command": "${command:python.interpreterPath}",
+            "args": [
+                "-m",
+                "uvicorn",
+                "main:app",
+                "--reload"
+            ],
+            "problemMatcher": []
         }
     ]
 }

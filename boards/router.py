@@ -1,9 +1,10 @@
+from typing import List
 from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from models.database import engine
 
-from .models import Board
+from .models import Board, CreateBoard
 
 api = APIRouter(prefix='/boards')
 
@@ -11,7 +12,7 @@ api = APIRouter(prefix='/boards')
 @api.get('/', response_model=list[Board])
 async def get_boards():
     with Session(engine) as session:
-        results = session.exec(select(Board))
+        results = session.exec(select(Board)).fetchall()
     return results
 
 
@@ -26,7 +27,7 @@ async def get_board(board_id: int):
 
 
 @api.post('/', response_model=Board)
-async def create_board(board: Board):
+async def create_board(board: CreateBoard):
     with Session(engine) as session:
         board_db = Board.from_orm(board)
         session.add(board_db)
