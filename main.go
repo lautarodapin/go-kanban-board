@@ -43,13 +43,6 @@ func main() {
 		boards.GET("/:id", controllers.GetBoard())
 		boards.PUT("/:id", controllers.UpdateBoard())
 	}
-	dropzones := r.Group("/dropzones")
-	{
-		dropzones.GET("/", controllers.GetDropzones())
-		dropzones.POST("/", controllers.CreateDropzone())
-		dropzones.GET("/:id", controllers.GetDropzone())
-		dropzones.PUT("/:id", controllers.UpdateDropzone())
-	}
 	columns := r.Group("/columns")
 	{
 		columns.GET("/", controllers.GetColumns())
