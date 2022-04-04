@@ -17,26 +17,21 @@ func (t *ticketManager) Update(ticket *Ticket, id uint64) error {
 
 func (t *ticketManager) GetById(id uint64) (Ticket, error) {
 	var ticket Ticket
-	err := DB.Preload("Kanban").Preload("Dropzone").First(&ticket, id).Error
+	err := DB.Preload("Board").Preload("Column").First(&ticket, id).Error
 	return ticket, err
 }
 
 func (t *ticketManager) GetAll() ([]Ticket, error) {
 	var tickets []Ticket
-	return tickets, DB.Preload("Kanban").Preload("Dropzone").Find(&tickets).Error
+	return tickets, DB.Preload("Board").Preload("Column").Find(&tickets).Error
 }
 
 func (t *ticketManager) GetAllByQuery(q string) ([]Ticket, error) {
 	var tickets []Ticket
-	args := map[string]interface{}{"query": "%" + q + "%"}
-	query := `
-		title LIKE @query AND description LIKE @query
-		AND kanbans.name LIKE @query
-	`
+
 	return tickets, DB.
-		Preload("Kanban").
-		Joins("Kanban").
-		Where(query, args).
+		Preload("Board").
+		Joins("Board").
 		Find(&tickets).
 		Error
 }
