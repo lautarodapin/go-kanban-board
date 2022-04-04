@@ -130,3 +130,28 @@ func UpdateBoard() gin.HandlerFunc {
 		ctx.JSON(http.StatusOK, board)
 	}
 }
+
+// @Summary Delete a board by id
+// @Schemes
+// @Description Delete a board by id
+// @Tags DeleteBoard
+// @Accept json
+// @Produce json
+// @Param id path string true "Board ID"
+// @Success 200 {string} string
+// @Failure 404 {string} error
+// @Router /boards/:id [delete]
+func DeleteBoard() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id, err := strconv.ParseUint(ctx.Param("id"), 0, 64)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
+		if err := models.BoardManager.DeleteById(id); err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
+		ctx.JSON(http.StatusOK, "Deleted")
+	}
+}

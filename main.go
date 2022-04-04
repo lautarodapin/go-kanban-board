@@ -42,6 +42,7 @@ func main() {
 		boards.POST("/", controllers.CreateBoard())
 		boards.GET("/:id", controllers.GetBoard())
 		boards.PUT("/:id", controllers.UpdateBoard())
+		boards.DELETE("/:id", controllers.DeleteBoard())
 	}
 	columns := r.Group("/columns")
 	{
@@ -49,6 +50,7 @@ func main() {
 		columns.POST("/", controllers.CreateColumn())
 		columns.GET("/:id", controllers.GetColumn())
 		columns.PUT("/:id", controllers.UpdateColumn())
+		columns.DELETE("/:id", controllers.DeleteColumn())
 	}
 	tickets := r.Group("/tickets")
 	{
@@ -56,6 +58,7 @@ func main() {
 		tickets.POST("/", controllers.CreateTicket())
 		tickets.GET("/:id", controllers.GetTicket())
 		tickets.PUT("/:id", controllers.UpdateTicket())
+		tickets.DELETE("/:id", controllers.DeleteTicket())
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

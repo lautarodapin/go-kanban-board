@@ -112,3 +112,29 @@ func UpdateColumn() gin.HandlerFunc {
 		ctx.JSON(http.StatusOK, column)
 	}
 }
+
+// @Summary Delete column by id
+// @Schemes
+// @Description Delete a column by id
+// @Tags DeleteColumn
+// @Accept json
+// @Produce json
+// @Param id path string true "Column ID"
+// @Success 200 {string} string
+// @Failure 404 {string} error
+// @Router /columns/:id [delete]
+func DeleteColumn() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id, err := strconv.ParseUint(ctx.Param("id"), 0, 64)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
+		err = models.ColumnManager.DeleteById(uint(id))
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
+		ctx.JSON(http.StatusOK, "Deleted")
+	}
+}

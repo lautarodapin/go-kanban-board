@@ -113,3 +113,28 @@ func UpdateTicket() gin.HandlerFunc {
 		ctx.JSON(http.StatusOK, ticket)
 	}
 }
+
+// @Summary Delete ticket by id
+// @Schemes
+// @Description Delete a ticket by id
+// @Tags Delete Ticket
+// @Accept json
+// @Produce json
+// @Param id path string true "Ticket ID"
+// @Success 200 {string} string
+// @Failure 404 {string} error
+// @Router /tickets/:id [delete]
+func DeleteTicket() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		id, err := strconv.ParseUint(ctx.Param("id"), 0, 64)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
+		if err := models.TicketManager.DeleteById(id); err != nil {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, err.Error())
+			return
+		}
+		ctx.JSON(http.StatusOK, "Deleted")
+	}
+}

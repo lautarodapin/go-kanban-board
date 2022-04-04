@@ -42,3 +42,7 @@ func (t *ticketManager) GetAllByQuery(q string) ([]Ticket, error) {
 		Find(&tickets).
 		Error
 }
+
+func (t *ticketManager) DeleteById(id uint64) error {
+	return DB.Delete(&Ticket{}, id).Error
+}
