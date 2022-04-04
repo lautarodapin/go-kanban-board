@@ -158,6 +158,42 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Delete a board by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DeleteBoard"
+                ],
+                "summary": "Delete a board by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Board ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "/columns": {
@@ -314,44 +350,9 @@
                         }
                     }
                 }
-            }
-        },
-        "/dropzones": {
-            "get": {
-                "description": "Returns all dropzones",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Dropzones list"
-                ],
-                "summary": "Get all dropzones",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/models.Dropzone"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
             },
-            "post": {
-                "description": "Create a new dropzone",
+            "delete": {
+                "description": "Delete a column by id",
                 "consumes": [
                     "application/json"
                 ],
@@ -359,53 +360,13 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Create Dropzone"
+                    "DeleteColumn"
                 ],
-                "summary": "Create a new dropzone",
-                "parameters": [
-                    {
-                        "description": "Dropzone",
-                        "name": "dropzone",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/serializers.DropzoneBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Dropzone"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/dropzones/:id": {
-            "get": {
-                "description": "Returns a dropzone by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Get Dropzone"
-                ],
-                "summary": "Get a dropzone by id",
+                "summary": "Delete column by id",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Dropzone ID",
+                        "description": "Column ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -415,52 +376,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Dropzone"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
                             "type": "string"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update a dropzone",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Update Dropzone"
-                ],
-                "summary": "Update a dropzone",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Dropzone ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Dropzone",
-                        "name": "dropzone",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/serializers.DropzoneBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Dropzone"
                         }
                     },
                     "404": {
@@ -626,6 +542,42 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Delete a ticket by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Delete Ticket"
+                ],
+                "summary": "Delete ticket by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ticket ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         }
     },
@@ -669,32 +621,6 @@
         "models.Column": {
             "type": "object",
             "properties": {
-                "dropzones": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Dropzone"
-                    }
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "order": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Dropzone": {
-            "type": "object",
-            "properties": {
-                "column": {
-                    "$ref": "#/definitions/models.Column"
-                },
-                "column_id": {
-                    "type": "integer"
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -717,9 +643,6 @@
                 },
                 "description": {
                     "type": "string"
-                },
-                "dropzone": {
-                    "$ref": "#/definitions/models.Dropzone"
                 },
                 "dropzone_id": {
                     "type": "integer"
@@ -746,28 +669,6 @@
                 },
                 "order": {
                     "type": "integer"
-                }
-            }
-        },
-        "serializers.DropzoneBody": {
-            "type": "object",
-            "required": [
-                "column_id",
-                "name",
-                "order"
-            ],
-            "properties": {
-                "column_id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 3
-                },
-                "order": {
-                    "type": "integer",
-                    "minimum": 0
                 }
             }
         },

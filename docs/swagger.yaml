@@ -25,23 +25,6 @@ definitions:
     type: object
   models.Column:
     properties:
-      dropzones:
-        items:
-          $ref: '#/definitions/models.Dropzone'
-        type: array
-      id:
-        type: integer
-      name:
-        type: string
-      order:
-        type: integer
-    type: object
-  models.Dropzone:
-    properties:
-      column:
-        $ref: '#/definitions/models.Column'
-      column_id:
-        type: integer
       id:
         type: integer
       name:
@@ -57,8 +40,6 @@ definitions:
         type: integer
       description:
         type: string
-      dropzone:
-        $ref: '#/definitions/models.Dropzone'
       dropzone_id:
         type: integer
       id:
@@ -75,22 +56,6 @@ definitions:
       order:
         type: integer
     required:
-    - name
-    - order
-    type: object
-  serializers.DropzoneBody:
-    properties:
-      column_id:
-        type: integer
-      name:
-        maxLength: 255
-        minLength: 3
-        type: string
-      order:
-        minimum: 0
-        type: integer
-    required:
-    - column_id
     - name
     - order
     type: object
@@ -161,6 +126,30 @@ paths:
       tags:
       - CreateBoard
   /boards/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a board by id
+      parameters:
+      - description: Board ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Delete a board by id
+      tags:
+      - DeleteBoard
     get:
       consumes:
       - application/json
@@ -264,6 +253,30 @@ paths:
       tags:
       - CreateColumn
   /columns/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a column by id
+      parameters:
+      - description: Column ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Delete column by id
+      tags:
+      - DeleteColumn
     get:
       consumes:
       - application/json
@@ -318,109 +331,6 @@ paths:
       summary: Update a column
       tags:
       - UpdateColumn
-  /dropzones:
-    get:
-      consumes:
-      - application/json
-      description: Returns all dropzones
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              items:
-                $ref: '#/definitions/models.Dropzone'
-              type: array
-            type: array
-        "404":
-          description: Not Found
-          schema:
-            type: string
-      summary: Get all dropzones
-      tags:
-      - Dropzones list
-    post:
-      consumes:
-      - application/json
-      description: Create a new dropzone
-      parameters:
-      - description: Dropzone
-        in: body
-        name: dropzone
-        required: true
-        schema:
-          $ref: '#/definitions/serializers.DropzoneBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Dropzone'
-        "404":
-          description: Not Found
-          schema:
-            type: string
-      summary: Create a new dropzone
-      tags:
-      - Create Dropzone
-  /dropzones/:id:
-    get:
-      consumes:
-      - application/json
-      description: Returns a dropzone by id
-      parameters:
-      - description: Dropzone ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Dropzone'
-        "404":
-          description: Not Found
-          schema:
-            type: string
-      summary: Get a dropzone by id
-      tags:
-      - Get Dropzone
-    put:
-      consumes:
-      - application/json
-      description: Update a dropzone
-      parameters:
-      - description: Dropzone ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Dropzone
-        in: body
-        name: dropzone
-        required: true
-        schema:
-          $ref: '#/definitions/serializers.DropzoneBody'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Dropzone'
-        "404":
-          description: Not Found
-          schema:
-            type: string
-      summary: Update a dropzone
-      tags:
-      - Update Dropzone
   /tickets:
     get:
       consumes:
@@ -470,6 +380,30 @@ paths:
       tags:
       - Create Ticket
   /tickets/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a ticket by id
+      parameters:
+      - description: Ticket ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Delete ticket by id
+      tags:
+      - Delete Ticket
     get:
       consumes:
       - application/json
