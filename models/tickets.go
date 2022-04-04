@@ -31,13 +31,11 @@ func (t *ticketManager) GetAllByQuery(q string) ([]Ticket, error) {
 	args := map[string]interface{}{"query": "%" + q + "%"}
 	query := `
 		title LIKE @query AND description LIKE @query
-		AND dropzones.name LIKE @query
 		AND kanbans.name LIKE @query
 	`
 	return tickets, DB.
-		Preload("Kanban").Preload("Dropzone").
+		Preload("Kanban").
 		Joins("Kanban").
-		Joins("Dropzone").
 		Where(query, args).
 		Find(&tickets).
 		Error

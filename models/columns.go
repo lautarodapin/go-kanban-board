@@ -23,7 +23,7 @@ func (c *columnManager) GetById(id uint64) (Column, error) {
 
 func (c *columnManager) GetAll() ([]Column, error) {
 	var columns []Column
-	return columns, DB.Preload("Dropzones").Find(&columns).Error
+	return columns, DB.Find(&columns).Error
 }
 
 func (c *columnManager) DeleteById(id uint) error {
