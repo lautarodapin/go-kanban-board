@@ -4,23 +4,9 @@ import (
 	"kanban-board/models"
 	"testing"
 	"time"
-
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
-func MockDb() *gorm.DB {
-	database, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
-	if err != nil {
-		panic(err)
-	}
-	database.AutoMigrate(&models.Board{}, &models.Column{}, &models.Ticket{})
-	return database
-}
-func TestCreateBoard(t *testing.T) {
+func TestBoards(t *testing.T) {
 	models.DB = MockDb()
 	var board models.Board
 	// Test Create
