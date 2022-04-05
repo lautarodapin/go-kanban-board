@@ -15,17 +15,16 @@ func (c *columnManager) Update(column *Column, id uint64) error {
 		Error
 }
 
-func (c *columnManager) GetById(id uint64) (Column, error) {
+func (c *columnManager) GetById(id uint64) (*Column, error) {
 	var column Column
-	err := DB.First(&column, id).Error
-	return column, err
+	return &column, DB.First(&column, id).Error
 }
 
-func (c *columnManager) GetAll() ([]Column, error) {
+func (c *columnManager) GetAll() (*[]Column, error) {
 	var columns []Column
-	return columns, DB.Find(&columns).Error
+	return &columns, DB.Find(&columns).Error
 }
 
 func (c *columnManager) DeleteById(id uint) error {
-	return DB.Delete(&Column{}, id).Error
+	return DB.Unscoped().Delete(&Column{}, id).Error
 }
